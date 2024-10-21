@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Elegant Table with Copy Option</title>
+    <title>Simple Elegant Table with Sorting and Copy Option</title>
     <style>
         * {
             margin: 0;
@@ -115,12 +115,38 @@
             visibility: visible;
             opacity: 1;
         }
+
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .filter-btn:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Project Overview</h1>
-        <table>
+
+        <!-- Filter Buttons for Sorting -->
+        <div class="filter-container">
+            <button class="filter-btn" onclick="sortTable('asc')">Sort Low to High</button>
+            <button class="filter-btn" onclick="sortTable('desc')">Sort High to Low</button>
+        </div>
+
+        <table id="projectTable">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -145,7 +171,7 @@
                         <p>Paragraph 1: Development work is in progress. We are currently focusing on building the backend systems.</p>
                         <p>Paragraph 2: Frontend design will be completed by next month, followed by rigorous testing.</p>
                     </td>
-                    <td>$10,000</td>
+                    <td data-funding="10000">$10,000</td>
                 </tr>
                 <tr>
                     <td>Project Beta</td>
@@ -161,7 +187,7 @@
                         <p>Paragraph 1: Marketing strategy is being formulated, focusing on digital campaigns and social media outreach.</p>
                         <p>Paragraph 2: Collaborations with influencers are planned for the next quarter.</p>
                     </td>
-                    <td>$20,000</td>
+                    <td data-funding="20000">$20,000</td>
                 </tr>
                 <!-- Add more rows as needed -->
             </tbody>
@@ -169,6 +195,7 @@
     </div>
 
     <script>
+        // Function to copy the link to clipboard
         function copyLink(linkId) {
             var linkText = document.getElementById(linkId).href;
             navigator.clipboard.writeText(linkText).then(function() {
@@ -177,6 +204,24 @@
                 setTimeout(function() {
                     tooltip.style.visibility = 'hidden';
                 }, 2000);
+            });
+        }
+
+        // Function to sort the table based on the Funding Amount
+        function sortTable(order) {
+            var table = document.getElementById("projectTable");
+            var rows = Array.from(table.rows).slice(1); // Get all rows except the header
+
+            rows.sort(function (rowA, rowB) {
+                var fundingA = parseInt(rowA.cells[4].getAttribute("data-funding"));
+                var fundingB = parseInt(rowB.cells[4].getAttribute("data-funding"));
+
+                return order === "asc" ? fundingA - fundingB : fundingB - fundingA;
+            });
+
+            // Reorder the rows in the table
+            rows.forEach(function (row) {
+                table.tBodies[0].appendChild(row);
             });
         }
     </script>
